@@ -2,6 +2,7 @@ package com.m2.myapplication;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
@@ -14,10 +15,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void startCourses(View view) {
-        // New activity
+        Intent intentStartCourse = new Intent(this, StartCourseActivity.class);
+        startActivity(intentStartCourse);
     }
 
     public void historicCourses(View view) {
-        // new Acitivity
+        Intent intentHistoricCourses = new Intent(this, HistoricCoursesActivity.class);
+        startActivity(intentHistoricCourses);
     }
 }
