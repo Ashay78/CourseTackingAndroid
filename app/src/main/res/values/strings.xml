@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">CourseTracking</string>
+    <string name="startCourses">Débuter une marche</string>
+    <string name="HistoricCourses">Historique des parcours</string>
+</resources>
