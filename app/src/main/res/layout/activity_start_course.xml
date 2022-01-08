@@ -16,6 +16,13 @@
         android:layout_height="wrap_content"
         android:text="@string/dateStart" />
 
+    <TextView
+        android:id="@+id/text_speed"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/speed" />
+
+
     <Button
         android:id="@+id/btn_stop"
         android:layout_width="match_parent"
