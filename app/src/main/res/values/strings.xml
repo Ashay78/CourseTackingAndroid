@@ -5,4 +5,6 @@
     <string name="nbStepStart">Nombre de pas : 0</string>
     <string name="dateStart">Heure de début :</string>
     <string name="stop">stop</string>
+    <string name="location">location</string>
+    <string name="speed">speed</string>
 </resources>
