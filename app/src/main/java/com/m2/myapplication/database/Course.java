@@ -20,18 +20,18 @@ public class Course {
     public Integer nbMetre;
 
     @NonNull
-    public String dateStart;
+    public Long dateStart;
 
     @NonNull
-    public String dateEnd;
+    public Long dateEnd;
 
     public Course(
             @NonNull String idCourse,
             @NonNull String idUser,
             @NonNull Integer nbSteps,
             @NonNull Integer nbMetre,
-            @NonNull String dateStart,
-            @NonNull String dateEnd
+            @NonNull Long dateStart,
+            @NonNull Long dateEnd
     ) {
         this.idCourse = idCourse;
         this.idUser = idUser;
@@ -39,6 +39,23 @@ public class Course {
         this.nbMetre = nbMetre;
         this.dateStart = dateStart;
         this.dateEnd = dateEnd;
+    }
+
+    public void setDateEnd(@NonNull Long dateEnd) {
+        this.dateEnd = dateEnd;
+    }
+
+    public void setNbMetre(@NonNull Integer nbMetre) {
+        this.nbMetre = nbMetre;
+    }
+
+    public void setNbSteps(@NonNull Integer nbSteps) {
+        this.nbSteps = nbSteps;
+    }
+
+    @NonNull
+    public String getIdCourse() {
+        return idCourse;
     }
 
     @Override

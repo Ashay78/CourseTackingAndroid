@@ -10,13 +10,13 @@ import java.util.List;
 @Dao
 public interface PositionDao {
     @Query("SELECT * FROM position")
-    List<Course> getAll();
+    List<Position> getAll();
 
     @Query("SELECT * FROM position WHERE idPosition = (:idPosition)")
-    Course getById(String idPosition);
+    Position getById(String idPosition);
 
     @Query("SELECT * FROM position WHERE idCourse = (:idCourse)")
-    List<Course> getAllByIdCourse(String idCourse);
+    List<Position> getAllByIdCourse(String idCourse);
 
     @Insert
     void insert(Position... positions);

@@ -3,9 +3,6 @@ package com.m2.myapplication;
 import static java.lang.System.currentTimeMillis;
 
 import android.Manifest;
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -13,21 +10,23 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.location.Location;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.ThemedSpinnerAdapter;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.room.Room;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.m2.myapplication.database.Course;
+import com.m2.myapplication.database.CourseTrackingDB;
+import com.m2.myapplication.database.Position;
 
 import java.text.SimpleDateFormat;
+import java.util.UUID;
 
 public class StartCourseActivity extends AppCompatActivity implements SensorEventListener {
 
@@ -39,11 +38,14 @@ public class StartCourseActivity extends AppCompatActivity implements SensorEven
 
     private int initStep = 0;
     private int cptStep = 0;
+    private int cptMetre = 0;
     private long dateStart;
 
     private boolean getPositionAllTime = true;
 
     private FusedLocationProviderClient fusedLocationClient;
+
+    private Course currentCourse;
 
 
     @Override
@@ -64,23 +66,18 @@ public class StartCourseActivity extends AppCompatActivity implements SensorEven
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
+        this.saveCourse();
+
         new Thread(() -> {
             while (this.getPositionAllTime) {
-                this.getPosition(location -> {
-                    if (location != null) {
-                        this.textSpeed.setText("" + location.getSpeed());
-                        Log.d("TEST", "" + location.getLatitude());
-                        Log.d("TEST", "" + location.getLongitude());
-                        Log.d("TEST", "" + location.getSpeed());
-                    }
-                });
+                this.getAndSavePosition();
                 try {
                     Thread.sleep(10000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
-        });
+        }).start();
 
 
     }
@@ -102,8 +99,8 @@ public class StartCourseActivity extends AppCompatActivity implements SensorEven
 
     @Override
     protected void onDestroy() {
+        this.initStopCourse();
         super.onDestroy();
-        this.getPositionAllTime = false;
     }
 
     @Override
@@ -132,25 +129,76 @@ public class StartCourseActivity extends AppCompatActivity implements SensorEven
     }
 
     public void stopCourse(View view) {
-        this.saveCourse();
         this.finish();
     }
 
     @Override
     public void onBackPressed() {
-        this.saveCourse();
         super.onBackPressed();
+
+    }
+
+    public void initStopCourse() {
+        this.updateCourse();
+        this.getAndSavePosition();
+        this.getPositionAllTime = false;
+    }
+
+    public void getAndSavePosition() {
+        this.getPosition(location -> {
+            if (location != null) {
+                this.textSpeed.setText("" + location.getSpeed());
+                this.savePosition(location);
+            }
+        });
     }
 
     public void saveCourse() {
-        SharedPreferences sharedPreferences= this.getSharedPreferences("courses", Context.MODE_PRIVATE);
+        new Thread(() -> {
+            CourseTrackingDB db = Room
+                    .databaseBuilder(
+                            getApplicationContext(),
+                            CourseTrackingDB.class,
+                            "courseTracking")
+                    .fallbackToDestructiveMigration()
+                    .build();
+            this.currentCourse = new Course(UUID.randomUUID().toString(), "1", this.cptStep, this.cptMetre, this.dateStart,this.dateStart);
+            db.courseDao().insert(this.currentCourse);
+            Log.d("TEST", "Course save");
+        }).start();
+    }
 
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putLong("dateStart", this.dateStart);
-        editor.putLong("dateFinish", currentTimeMillis());
-        editor.putInt("nbSteps", this.cptStep);
-        editor.apply();
 
-        Toast.makeText(this,"save",Toast.LENGTH_LONG).show();
+    public void savePosition(Location location) {
+        new Thread(() -> {
+            CourseTrackingDB db = Room
+                    .databaseBuilder(
+                            getApplicationContext(),
+                            CourseTrackingDB.class,
+                            "courseTracking")
+                    .fallbackToDestructiveMigration()
+                    .build();
+            db.positionDao().insert(new Position(UUID.randomUUID().toString(), this.currentCourse.getIdCourse(), location.getLatitude(), location.getLongitude(), currentTimeMillis()));
+            Log.d("TEST", "Position save");
+        }).start();
+    }
+
+    public void updateCourse() {
+        new Thread(() -> {
+            CourseTrackingDB db = Room
+                    .databaseBuilder(
+                            getApplicationContext(),
+                            CourseTrackingDB.class,
+                            "courseTracking")
+                    .fallbackToDestructiveMigration()
+                    .build();
+
+            this.currentCourse.setDateEnd(currentTimeMillis());
+            this.currentCourse.setNbMetre(this.cptMetre);
+            this.currentCourse.setNbSteps(this.cptStep);
+
+            db.courseDao().update(this.currentCourse);
+            Log.d("TEST", "Course update");
+        }).start();
     }
 }

@@ -14,20 +14,20 @@ public class Position {
     public String IdCourse;
 
     @NonNull
-    public Integer latitude;
+    public Double latitude;
 
     @NonNull
-    public Integer longitude;
+    public Double longitude;
 
     @NonNull
-    public String date;
+    public Long date;
 
     public Position(
             @NonNull String idPosition,
             @NonNull String IdCourse,
-            @NonNull Integer latitude,
-            @NonNull Integer longitude,
-            @NonNull String date
+            @NonNull Double latitude,
+            @NonNull Double longitude,
+            @NonNull Long date
     ) {
         this.idPosition = idPosition;
         this.IdCourse = IdCourse;
