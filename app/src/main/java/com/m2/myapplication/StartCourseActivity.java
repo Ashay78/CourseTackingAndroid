@@ -27,7 +27,7 @@ import com.m2.myapplication.database.Position;
 
 import java.text.SimpleDateFormat;
 import java.util.UUID;
-
+// TODO Save metre
 public class StartCourseActivity extends AppCompatActivity implements SensorEventListener {
 
     private SensorManager sensorManager;
