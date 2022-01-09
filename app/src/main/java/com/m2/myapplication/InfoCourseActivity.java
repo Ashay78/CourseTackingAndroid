@@ -1,5 +1,6 @@
 package com.m2.myapplication;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -66,12 +67,11 @@ public class InfoCourseActivity extends AppCompatActivity {
             this.textUser.setText("User : " + this.course.getIdUser());
             this.textNbStep.setText("Nombre de pas : " + this.course.getNbSteps() + " pas");
             this.textNbMetre.setText("Nombre de metre : " + this.course.getNbMetre() + " m");
-
-
         }).start();
     }
 
     public void SeeMap(View view) {
-
+        Intent mapIntent = new Intent(this, MapActivity.class);
+        startActivity(mapIntent);
     }
 }
