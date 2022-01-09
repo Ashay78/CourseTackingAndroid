@@ -4,6 +4,8 @@ import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
+import java.text.SimpleDateFormat;
+
 @Entity
 public class Course {
     @PrimaryKey
@@ -58,15 +60,36 @@ public class Course {
         return idCourse;
     }
 
+    @NonNull
+    public Long getDateStart() {
+        return dateStart;
+    }
+
+    @NonNull
+    public Long getDateEnd() {
+        return dateEnd;
+    }
+
+    @NonNull
+    public String getIdUser() {
+        return idUser;
+    }
+
+    @NonNull
+    public Integer getNbMetre() {
+        return nbMetre;
+    }
+
+    @NonNull
+    public Integer getNbSteps() {
+        return nbSteps;
+    }
+
     @Override
     public String toString() {
-        return "Course{" +
-                "idCourse='" + idCourse + '\'' +
-                ", IdUser='" + idUser + '\'' +
-                ", nbSteps=" + nbSteps +
-                ", nbMetre=" + nbMetre +
-                ", dateStart='" + dateStart + '\'' +
-                ", dateEnd='" + dateEnd + '\'' +
-                '}';
+        SimpleDateFormat formater = null;
+        formater = new SimpleDateFormat("hh:mm");
+
+        return "User : " + this.idUser + " | (" + formater.format(this.dateStart) + " - " + formater.format(this.dateEnd) + ") | " + this.nbSteps + " pas | " + this.nbMetre + " m";
     }
 }

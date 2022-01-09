@@ -7,4 +7,5 @@
     <string name="stop">stop</string>
     <string name="location">location</string>
     <string name="speed">speed</string>
+    <string name="see_map">Voir sur la map</string>
 </resources>
