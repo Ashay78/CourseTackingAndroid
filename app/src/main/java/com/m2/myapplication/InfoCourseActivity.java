@@ -51,12 +51,6 @@ public class InfoCourseActivity extends AppCompatActivity {
                     .build();
 
             course = db.courseDao().getById(courseId);
-            List<Position> positions = db.positionDao().getAllByIdCourse(courseId);
-
-            Log.d("TEST", course.toString());
-            for (Position position : positions) {
-                Log.d("TEST", position.toString());
-            }
 
             DateFormat mediumDateFormat = DateFormat.getDateTimeInstance(
                     DateFormat.MEDIUM,
@@ -72,6 +66,9 @@ public class InfoCourseActivity extends AppCompatActivity {
 
     public void SeeMap(View view) {
         Intent mapIntent = new Intent(this, MapActivity.class);
+        Bundle data = new Bundle();
+        data.putString("courseId", this.course.getIdCourse());
+        mapIntent.putExtras(data);
         startActivity(mapIntent);
     }
 }
