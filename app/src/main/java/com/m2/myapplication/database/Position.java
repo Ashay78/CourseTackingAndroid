@@ -36,6 +36,16 @@ public class Position {
         this.date = date;
     }
 
+    @NonNull
+    public Double getLongitude() {
+        return longitude;
+    }
+
+    @NonNull
+    public Double getLatitude() {
+        return latitude;
+    }
+
     @Override
     public String toString() {
         return "Position{" +

@@ -36,13 +36,6 @@ public class MainActivity extends AppCompatActivity {
 
             List<Course> courses = db.courseDao().getAll();
             List<Position> positions = db.positionDao().getAll();
-
-            for (Course course : courses) {
-                Log.d("TEST", course.toString());
-            }
-            for (Position position : positions) {
-                Log.d("TEST", position.toString());
-            }
         }).start();
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {

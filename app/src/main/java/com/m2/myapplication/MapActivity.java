@@ -5,9 +5,11 @@ import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
+import androidx.room.Room;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -17,10 +19,17 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.m2.myapplication.database.CourseTrackingDB;
+import com.m2.myapplication.database.Position;
+
+import java.text.DateFormat;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 public class MapActivity extends FragmentActivity implements OnMapReadyCallback {
     private GoogleMap mMap;
-
+    private List<Position> positions;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +40,21 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        Bundle b = getIntent().getExtras();
+        String courseId = b.getString("courseId");
+
+        new Thread(() -> {
+            CourseTrackingDB db = Room
+                    .databaseBuilder(
+                            getApplicationContext(),
+                            CourseTrackingDB.class,
+                            "courseTracking")
+                    .fallbackToDestructiveMigration()
+                    .build();
+            db.positionDao().insert(new Position(UUID.randomUUID().toString(), "984217af-1d8f-4a6a-bf02-2ab7c0bac9c7", 0.0,0.0,Long.parseLong("1")));
+            this.positions = db.positionDao().getAllByIdCourse(courseId);
+        }).start();
     }
 
     /**
@@ -46,11 +70,22 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        // Marqueur sur Le Havre
-        LatLng leHavre = new LatLng(49.4931919,0.1109486);
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(leHavre, 14));
+        LatLng pos;
+        if (this.positions.get(0) != null) {
+            pos = new LatLng(this.positions.get(0).getLatitude(),this.positions.get(0).getLongitude());
+        } else {
+            pos = new LatLng(49.4931919,0.1109486);
+        }
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(pos, 14));
         mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.map_style));
 
+        PolylineOptions options = new PolylineOptions().width(this.positions.size()).color(Color.RED).geodesic(true);
+        for (int i = 0; i < this.positions.size(); i++) {
+            Log.d("TEST", this.positions.get(0).toString());
+            LatLng point = new  LatLng(this.positions.get(i).getLatitude(), this.positions.get(i).getLongitude());
+            options.add(point);
+        }
+        mMap.addPolyline(options);
     }
 
     @Override
