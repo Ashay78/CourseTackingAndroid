@@ -5,7 +5,9 @@ import androidx.core.app.ActivityCompat;
 import androidx.room.Room;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
@@ -44,12 +46,33 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void startCourses(View view) {
-        Intent intentStartCourse = new Intent(this, StartCourseActivity.class);
-        startActivity(intentStartCourse);
+        SharedPreferences sharedPreferences = this.getSharedPreferences("courseTracking", Context.MODE_PRIVATE);
+
+        if(sharedPreferences != null) {
+            String phoneNumber = sharedPreferences.getString("phoneNumber", "");
+            if (phoneNumber == null || phoneNumber.equals("")) {
+                Intent intentPhoneNumber = new Intent(this, PhoneNumberActivity.class);
+                startActivity(intentPhoneNumber);
+            } else {
+                Intent intentStartCourse = new Intent(this, StartCourseActivity.class);
+                Bundle data = new Bundle();
+                data.putString("userId", phoneNumber);
+                intentStartCourse.putExtras(data);
+                startActivity(intentStartCourse);
+            }
+        } else {
+            Intent intentPhoneNumber = new Intent(this, PhoneNumberActivity.class);
+            startActivity(intentPhoneNumber);
+        }
     }
 
     public void historicCourses(View view) {
         Intent intentHistoricCourses = new Intent(this, HistoricCoursesActivity.class);
         startActivity(intentHistoricCourses);
+    }
+
+    public void phoneNumber(View view) {
+        Intent intentPhoneNumber = new Intent(this, PhoneNumberActivity.class);
+        startActivity(intentPhoneNumber);
     }
 }

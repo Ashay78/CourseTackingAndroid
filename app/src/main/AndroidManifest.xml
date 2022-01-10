@@ -37,6 +37,7 @@
         <activity android:name=".HistoricCoursesActivity"/>
         <activity android:name=".InfoCourseActivity"/>
         <activity android:name=".MapActivity"/>
+        <activity android:name=".PhoneNumberActivity" />
 
     </application>
 
