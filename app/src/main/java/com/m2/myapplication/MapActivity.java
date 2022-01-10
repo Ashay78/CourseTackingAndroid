@@ -81,7 +81,6 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
 
         PolylineOptions options = new PolylineOptions().width(this.positions.size()).color(Color.RED).geodesic(true);
         for (int i = 0; i < this.positions.size(); i++) {
-            Log.d("TEST", this.positions.get(0).toString());
             LatLng point = new  LatLng(this.positions.get(i).getLatitude(), this.positions.get(i).getLongitude());
             options.add(point);
         }

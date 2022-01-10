@@ -46,12 +46,16 @@ public class StartCourseActivity extends AppCompatActivity implements SensorEven
     private FusedLocationProviderClient fusedLocationClient;
 
     private Course currentCourse;
+    private String userId;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start_course);
+
+        Bundle b = getIntent().getExtras();
+        this.userId   = b.getString("userId");
 
         this.sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         this.sensorManager.registerListener(this, this.sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER), this.sensorManager.SENSOR_DELAY_GAME);
@@ -162,9 +166,8 @@ public class StartCourseActivity extends AppCompatActivity implements SensorEven
                             "courseTracking")
                     .fallbackToDestructiveMigration()
                     .build();
-            this.currentCourse = new Course(UUID.randomUUID().toString(), "1", this.cptStep, this.cptMetre, this.dateStart,this.dateStart);
+            this.currentCourse = new Course(UUID.randomUUID().toString(), this.userId, this.cptStep, this.cptMetre, this.dateStart,this.dateStart);
             db.courseDao().insert(this.currentCourse);
-            Log.d("TEST", "Course save");
         }).start();
     }
 
@@ -179,7 +182,6 @@ public class StartCourseActivity extends AppCompatActivity implements SensorEven
                     .fallbackToDestructiveMigration()
                     .build();
             db.positionDao().insert(new Position(UUID.randomUUID().toString(), this.currentCourse.getIdCourse(), location.getLatitude(), location.getLongitude(), currentTimeMillis()));
-            Log.d("TEST", "Position save");
         }).start();
     }
 
@@ -198,7 +200,6 @@ public class StartCourseActivity extends AppCompatActivity implements SensorEven
             this.currentCourse.setNbSteps(this.cptStep);
 
             db.courseDao().update(this.currentCourse);
-            Log.d("TEST", "Course update");
         }).start();
     }
 }
