@@ -11,6 +11,12 @@
         android:text="@string/nbStepStart" />
 
     <TextView
+        android:id="@+id/text_nb_metre"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/metre" />
+
+    <TextView
         android:id="@+id/text_date_start"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -21,7 +27,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/speed" />
-
 
     <Button
         android:id="@+id/btn_stop"

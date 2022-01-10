@@ -33,6 +33,7 @@ public class StartCourseActivity extends AppCompatActivity implements SensorEven
     private SensorManager sensorManager;
 
     private TextView textNbSteps;
+    private TextView textNbMetre;
     private TextView textDateStart;
     private TextView textSpeed;
 
@@ -63,6 +64,7 @@ public class StartCourseActivity extends AppCompatActivity implements SensorEven
         this.textNbSteps = findViewById(R.id.text_nb_steps);
         this.textDateStart = findViewById(R.id.text_date_start);
         this.textSpeed = findViewById(R.id.text_speed);
+        this.textNbMetre = findViewById(R.id.text_nb_metre);
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("HH'h'mm");
         this.dateStart = currentTimeMillis();
@@ -121,7 +123,9 @@ public class StartCourseActivity extends AppCompatActivity implements SensorEven
                     this.initStep = (int) sensorEvent.values[0];
                 }
                 this.cptStep = (int) sensorEvent.values[0] - this.initStep;
+                this.cptMetre = this.cptStep;
                 this.textNbSteps.setText("Nombre de pas : " + this.cptStep);
+                this.textNbMetre.setText("Nombre de metre : " + Long.parseLong("" + this.cptMetre) + " m");
                 break;
             default:
         }

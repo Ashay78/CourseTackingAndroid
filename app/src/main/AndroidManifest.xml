@@ -33,10 +33,12 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".StartCourseActivity"/>
+        <activity android:name=".StartCourseActivity"
+            android:screenOrientation="portrait"/>
         <activity android:name=".HistoricCoursesActivity"/>
         <activity android:name=".InfoCourseActivity"/>
-        <activity android:name=".MapActivity"/>
+        <activity android:name=".MapActivity"
+            android:screenOrientation="portrait"/>
         <activity android:name=".PhoneNumberActivity" />
 
     </application>
