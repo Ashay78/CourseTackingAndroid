@@ -10,15 +10,20 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.room.Room;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.m2.myapplication.database.Course;
@@ -49,6 +54,8 @@ public class StartCourseActivity extends AppCompatActivity implements SensorEven
     private Course currentCourse;
     private String userId;
 
+    private LocationRequest locationRequest;
+    private LocationCallback locationCallback;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,23 +76,44 @@ public class StartCourseActivity extends AppCompatActivity implements SensorEven
         SimpleDateFormat dateFormat = new SimpleDateFormat("HH'h'mm");
         this.dateStart = currentTimeMillis();
         this.textDateStart.setText("Heure de début : " + dateFormat.format(this.dateStart));
+        this.saveCourse();
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
-        this.saveCourse();
+        locationRequest = LocationRequest.create();
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        locationRequest.setInterval(2*5000);
 
-        new Thread(() -> {
-            while (this.getPositionAllTime) {
-                this.getAndSavePosition();
-                try {
-                    Thread.sleep(10000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+        locationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(LocationResult locationResult) {
+                if (locationResult == null) {
+                    return;
+                }
+                for (Location location : locationResult.getLocations()) {
+                    String Lat = String.valueOf(location.getLatitude());
+                    String Lon = String.valueOf(location.getLongitude());
+
+                    Toast.makeText(getApplicationContext(), Lat + " - " + Lon, Toast.LENGTH_SHORT).show();
+
+                    textSpeed.setText("" + location.getSpeed());
+                    savePosition(location);
                 }
             }
-        }).start();
+        };
 
+        refreshPosition();
 
+    }
+
+    public void refreshPosition() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[] { Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
+        }
+
+        fusedLocationClient.requestLocationUpdates(locationRequest,
+                locationCallback,
+                Looper.getMainLooper());
     }
 
     public void getPosition(OnSuccessListener<Location> locationOnSuccessListener) {
@@ -148,7 +176,7 @@ public class StartCourseActivity extends AppCompatActivity implements SensorEven
 
     public void initStopCourse() {
         this.updateCourse();
-        this.getAndSavePosition();
+//        this.getAndSavePosition();
         this.getPositionAllTime = false;
     }
 
