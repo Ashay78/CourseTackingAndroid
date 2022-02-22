@@ -4,6 +4,10 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="../../../../Library/Android/sdk/platforms/android-32/data/res/layout/simple_list_item_1.xml" value="0.15677083333333333" />
+        <entry key="..\:/Users/leons/Documents/Sources/CourseTackingAndroid/app/src/main/res/layout/activity_demande_suivi.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/leons/Documents/Sources/CourseTackingAndroid/app/src/main/res/layout/activity_main.xml" value="0.20052083333333334" />
+        <entry key="..\:/Users/leons/Documents/Sources/CourseTackingAndroid/app/src/main/res/layout/activity_map.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/leons/Documents/Sources/CourseTackingAndroid/app/src/main/res/layout/activity_phone_number.xml" value="0.36666666666666664" />
         <entry key="app/src/main/res/layout/activity_historic_courses.xml" value="0.1503623188405797" />
         <entry key="app/src/main/res/layout/activity_info_course.xml" value="0.15729166666666666" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.1503623188405797" />

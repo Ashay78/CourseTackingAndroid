@@ -71,6 +71,11 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intentHistoricCourses);
     }
 
+    public void demandeSuivi(View view) {
+        Intent demandeSuivi = new Intent(this, DemandeSuiviActivity.class);
+        startActivity(demandeSuivi);
+    }
+
     public void phoneNumber(View view) {
         Intent intentPhoneNumber = new Intent(this, PhoneNumberActivity.class);
         startActivity(intentPhoneNumber);

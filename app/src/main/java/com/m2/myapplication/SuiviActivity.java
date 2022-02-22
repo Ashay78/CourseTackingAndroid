@@ -1,13 +1,8 @@
 package com.m2.myapplication;
 
-import android.content.Intent;
 import android.graphics.Color;
-import android.location.Location;
 import android.os.Bundle;
-import android.os.Handler;
-import android.util.Log;
 
-import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 import androidx.room.Room;
 
@@ -17,17 +12,14 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.m2.myapplication.database.CourseTrackingDB;
 import com.m2.myapplication.database.Position;
 
-import java.text.DateFormat;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class MapActivity extends FragmentActivity implements OnMapReadyCallback {
+public class SuiviActivity extends FragmentActivity implements OnMapReadyCallback {
     private GoogleMap mMap;
     private List<Position> positions;
 

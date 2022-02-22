@@ -9,7 +9,11 @@
     <string name="speed">speed</string>
     <string name="see_map">Voir sur la map</string>
     <string name="phoneNumber">Entrer votre numéro de téléphone ...</string>
+    <string name="phoneNumberSuivi">Entrer le numéro de téléphone de la personne a suivre</string>
     <string name="phone_number">Entrer votre numéro de téléphone</string>
     <string name="save">sauvegarder</string>
     <string name="metre">metre</string>
+    <string name="DemandeSuivi">Demande de suivi</string>
+    <string name="numero_de_la_personne_a_suivre">Numero de la personne a suivre</string>
+    <string name="effectuer_la_demande">Effectuer la demande</string>
 </resources>
