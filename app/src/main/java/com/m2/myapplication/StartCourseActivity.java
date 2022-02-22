@@ -4,13 +4,16 @@ import static java.lang.System.currentTimeMillis;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Looper;
+import android.telephony.SmsManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
@@ -18,6 +21,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.room.Room;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -35,12 +39,17 @@ import java.util.UUID;
 // TODO Save metre
 public class StartCourseActivity extends AppCompatActivity implements SensorEventListener {
 
+    private static final int MY_PERMISSIONS_REQUEST_SEND_SMS = 0;
+    private static final int MY_PERMISSIONS_REQUEST_READ_SMS = 1;
+
     private SensorManager sensorManager;
 
     private TextView textNbSteps;
     private TextView textNbMetre;
     private TextView textDateStart;
     private TextView textSpeed;
+
+    private String currentSavedLocation;
 
     private int initStep = 0;
     private int cptStep = 0;
@@ -96,6 +105,8 @@ public class StartCourseActivity extends AppCompatActivity implements SensorEven
 
                     Toast.makeText(getApplicationContext(), Lat + " - " + Lon, Toast.LENGTH_SHORT).show();
 
+                    currentSavedLocation = Lat + " " + Lon;
+
                     textSpeed.setText("" + location.getSpeed());
                     savePosition(location);
                 }
@@ -104,6 +115,67 @@ public class StartCourseActivity extends AppCompatActivity implements SensorEven
 
         refreshPosition();
 
+        // Send sms to the destination
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.SEND_SMS)
+                != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(this,
+                Manifest.permission.READ_SMS)
+                != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.SEND_SMS) || ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.READ_SMS)) {
+            } else {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.SEND_SMS, Manifest.permission.READ_SMS},
+                        MY_PERMISSIONS_REQUEST_SEND_SMS);
+            }
+        }
+
+        new Thread(() -> {
+            boolean stopThread = false;
+            while (!stopThread) {
+                try {
+                    Thread.sleep(1000);
+
+                    Cursor cursor = getContentResolver().query(Uri.parse("content://sms"), null, null, null, null);
+                    if (cursor.moveToFirst()) { // must check the result to prevent exception
+                        do {
+                            String date = cursor.getString(4);
+                            String body = cursor.getString(12);
+                            String sender = cursor.getString(2);
+
+                            if (body.startsWith("2 IDENTIFY IN")) {
+                                System.out.println("Received IN from " + sender);
+
+                                SmsManager smsManager = SmsManager.getDefault();
+                                smsManager.sendTextMessage(sender, null, "2 IDENTIFY OUT " + this.userId, null, null);
+
+                                new Thread(() -> {
+                                    while (true) {
+                                        try {
+                                            Thread.sleep(10000);
+                                            smsManager.sendTextMessage(sender, null, "3 POS " + this.currentSavedLocation, null, null);
+                                        } catch (Exception ex) {
+                                            ex.printStackTrace();
+                                        }
+                                    }
+                                }).start();
+
+                                stopThread = true;
+                                break; // fuck other sms
+                            }
+                        } while (cursor.moveToNext());
+                    }
+                } catch(SecurityException ex) {
+                    ActivityCompat.requestPermissions(this,
+                            new String[]{Manifest.permission.READ_SMS},
+                            MY_PERMISSIONS_REQUEST_READ_SMS);
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
     }
 
     public void refreshPosition() {
@@ -233,5 +305,26 @@ public class StartCourseActivity extends AppCompatActivity implements SensorEven
 
             db.courseDao().update(this.currentCourse);
         }).start();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,String permissions[], int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == MY_PERMISSIONS_REQUEST_SEND_SMS) {
+            if (grantResults.length > 0
+                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            } else {
+                Toast.makeText(getApplicationContext(),
+                        "SMS faild, please try again.", Toast.LENGTH_LONG).show();
+            }
+        } else if (requestCode == MY_PERMISSIONS_REQUEST_READ_SMS) {
+            if (grantResults.length > 0
+                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            } else {
+                Toast.makeText(getApplicationContext(),
+                        "SMS faild, please try again.", Toast.LENGTH_LONG).show();
+            }
+        }
+
     }
 }
